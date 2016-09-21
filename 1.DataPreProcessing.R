@@ -21,3 +21,13 @@ res$DeliveryLeadTime[is.na(res$DeliveryLeadTime)] <- median(res$DeliveryLeadTime
 res$DeliveryLeadTime <- ifelse(res$DeliveryLeadTime == 0, median(res$DeliveryLeadTime), res$DeliveryLeadTime)
 
 summary(res$DeliveryLeadTime)
+
+
+
+# remove outlier in DLT
+(dt <- res[with(res, DeliveryLeadTime < 100), ])
+
+summary(dt$DeliveryLeadTime)
+
+#
+
