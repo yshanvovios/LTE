@@ -22,7 +22,7 @@ library(dplyr)
 
 # remove outlier in DLT and create dataframe
 (dt <- res[with(res, DeliveryLeadTime < 100), ])
-
+summary(dt)
 summary(dt$DeliveryLeadTime)
 
 #remove variables
@@ -34,7 +34,7 @@ dt$DeliveryLeadTime[is.na(dt$DeliveryLeadTime)] <- median(dt$DeliveryLeadTime, n
 
 #impute 0 with mean value in DLT
 dt$DeliveryLeadTime <- ifelse(dt$DeliveryLeadTime == 0, median(dt$DeliveryLeadTime), dt$DeliveryLeadTime)
-
+summary(dt)
 summary(dt$DeliveryLeadTime)
 
 ### plot the missing value map
@@ -55,6 +55,9 @@ dt$dlt <- ifelse(dt$DeliveryLeadTime < 16, 1, 0)
 
 # set factor
 dt$DeliveryLeadTime <- as.factor(dt$DeliveryLeadTime)
+dt$OrderID <- as.factor(dt$OrderID)
+dt$RestaurantID <- as.factor(dt$RestaurantID)
+dt$RestaurantName <- as.factor(dt$RestaurantName)
 
 # ggplot leadtime
 library(ggplot2)
@@ -196,18 +199,24 @@ summary(trans.ica)
 
 #### Applied Machine Learning ####
 
-# using randomforest
 library(randomForest)
-# trans.normal$OrderID <- as.factor(trans.normal$OrderID)
-# trans.normal$RestaurantID <- as.factor(trans.normal$RestaurantID)
-# trans.normal$RestaurantName <- as.factor(trans.normal$RestaurantName)
-# rf.train.1 <- select(dt, c(1:2))
-# 
-# rf.label <- as.factor(train$dlt)
-# 
-# set.seed(1234)
-# rf.1 <- randomForest(x = rf.train.1, y = rf.label, importance = TRUE, ntree = 1000)
+
+
 
 #### 4. Normalize ####
+trans.normal$OrderID <- as.factor(trans.normal$OrderID)
+trans.normal$RestaurantID <- as.factor(trans.normal$RestaurantID)
+trans.normal$RestaurantName <- as.factor(trans.normal$RestaurantName)
+trans.normal$DeliveryLeadTime <- as.numeric(trans.normal$DeliveryLeadTime)
+
+rf.train.1 <- select(trans.normal, c(1:2))
+
+rf.label <- as.factor(trans.normal$dlt)
+
+set.seed(1234)
+rf.1 <- randomForest(x = rf.train.1, y = rf.label, importance = TRUE, ntree = 1000)
+
+which(sapply(trans.normal, function(y) nlevels(y) >32))
+
 
 
